@@ -1,0 +1,19 @@
+{
+    "dis": [
+        {
+            "name": "1",
+            "low": "",
+            "high": "http://192.168.12.145:8000/coocenter-api/plugin-modbus/handle/task?number=9999\u0026runType=start"
+        },
+        {
+            "name": "2",
+            "low": "",
+            "high": "http://192.168.12.145:8000/coocenter-api/plugin-modbus/handle/task?number=9999\u0026runType=stop"
+        },
+        {
+            "name": "3",
+            "low": "",
+            "high": "http://www.baidu.com"
+        }
+    ]
+}
