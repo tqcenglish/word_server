@@ -1,12 +1,14 @@
 package configs
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"strings"
 )
 
-var BasicPath = "/Users/tqcenglish/SrcCode/Flutter/word_english/wordPic-master"
+var BasicPath = "./data"
+var WordData []string
 
 type configStruct struct {
 	WebPort int
@@ -24,12 +26,16 @@ type configStruct struct {
 var ConfigGlobal = &configStruct{}
 
 func LoadValue() ([]string, error) {
-	byteValue, err := ioutil.ReadFile("/Users/tqcenglish/SrcCode/Flutter/word_english/wordPic-master/google-10000-english.txt")
+	if WordData != nil {
+		return WordData, nil
+	}
+
+	byteValue, err := ioutil.ReadFile(fmt.Sprintf("%s/google-10000-english.txt", BasicPath))
 	if err != nil {
 		log.Printf("have error %s", err)
 		return nil, err
 	}
 
-	data := strings.Split(string(byteValue), "\n")
-	return data, nil
+	WordData = strings.Split(string(byteValue), "\n")
+	return WordData, nil
 }

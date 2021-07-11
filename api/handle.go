@@ -6,6 +6,7 @@ import (
 	"github/tqcenglish/word-english/configs"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -45,15 +46,26 @@ func DetailWord(ctx *gin.Context) {
 		return
 	}
 
-	// 遍历文件
+	//查找翻译
+	wordModel := model.WordModel{
+		Word: word,
+	}
+
+	_, err = model.DBOrmInstance.Get(&wordModel)
+	if err != nil {
+		logrus.Error(err)
+	}
+
+	// 遍历图片文件
 	ctx.JSON(http.StatusOK, gin.H{"status": "success",
 		"data": []string{
 			fmt.Sprintf("%s/%s/0.jpg", string(word[0]), word),
+			fmt.Sprintf("%s/%s/1.jpg", string(word[0]), word),
 			fmt.Sprintf("%s/%s/2.jpg", string(word[0]), word),
 			fmt.Sprintf("%s/%s/3.jpg", string(word[0]), word),
-			fmt.Sprintf("%s/%s/4.jpg", string(word[0]), word),
 		},
-		"voice": fmt.Sprintf("%s/%s/%s.mp3", string(word[0]), word, word),
+		"meaning": wordModel.Meaning,
+		"voice":   fmt.Sprintf("%s/%s/%s.mp3", string(word[0]), word, word),
 	})
 	return
 
@@ -73,8 +85,18 @@ func DetailWord(ctx *gin.Context) {
  * @apiSuccess {string}  data.status success
  */
 func GetAllWords(ctx *gin.Context) {
+	word := ctx.Param("word")
 	data, _ := configs.LoadValue()
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": data})
+
+	logrus.Infof("word list param %s", word)
+	var filterData []string
+	for _, item := range data {
+		if len(item) > 0 && string(item[0]) == strings.ToLower(word) {
+			filterData = append(filterData, item)
+		}
+	}
+	logrus.Debugf("filter data %s", filterData)
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": filterData})
 }
 
 //PlayMP3 测试发送
@@ -88,14 +110,6 @@ func GetAllWords(ctx *gin.Context) {
  * @apiSuccess {String} status 调用结果
  */
 func PlayMP3(ctx *gin.Context) {
-	var param model.PlayMP3Param
-
-	if err := ctx.ShouldBindJSON(&param); err != nil {
-		logrus.Error(err)
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": "error"})
-		return
-	}
-
 	// 请求 url
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 }

@@ -12,7 +12,7 @@ func AddRouter(router *gin.Engine) {
 	router.Use(JWTAuth(configs.ConfigGlobal.IdentityKey))
 
 	wordEnglish := router.Group("/word-english")
-	wordEnglish.GET("/word/:word", DetailWord)
-	wordEnglish.GET("/word", GetAllWords)
+	wordEnglish.GET("/word-detail/:word", DetailWord)
+	wordEnglish.GET("/word-list/:word", GetAllWords)
 	wordEnglish.POST("/play-mp3", PlayMP3)
 }
